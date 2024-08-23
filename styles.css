@@ -1,0 +1,142 @@
+/* General styles */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f4f4;
+}
+
+.main-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+h1 {
+  color: #333;
+  word-wrap: break-word;
+}
+
+/* Button styles */
+.add,
+.has-read,
+.unread,
+.del-button {
+  padding: 10px 15px;
+  margin: 10px 0;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  opacity: 0.8;
+}
+
+.add {
+  background-color: #459ba0;
+}
+
+.has-read {
+  background-color: #45a049;
+}
+
+.del-button {
+  background-color: rgb(180, 11, 11);
+}
+
+.unread {
+  background-color: rgb(197, 137, 32);
+}
+
+button:hover {
+  opacity: 1;
+}
+
+/* Dialog styles */
+.dialog {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.dialog form {
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog label {
+  margin-top: 10px;
+}
+
+.dialog input,
+.dialog select {
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.submit {
+  margin-bottom: 10px;
+}
+
+/* Table styles */
+.table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  table-layout: fixed;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+}
+
+.table td {
+  border-top: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.table .title {
+  width: 40%;
+}
+
+.table .author {
+  width: 30%;
+}
+
+.table .status {
+  width: 15%;
+}
+
+.table th:last-child,
+.table td:last-child {
+  width: 15%;
+}
+
+/* Ensure content doesn't overflow cells */
+.table td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Number of books section */
+.number-of-books {
+  margin-top: 20px;
+}
+
+/* Responsive design */
+@media screen and (max-width: 600px) {
+  .table {
+    font-size: 14px;
+  }
+
+  .table th,
+  .table td {
+    padding: 8px;
+  }
+}

@@ -4,27 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shelf</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="output.css" />
   </head>
   <body>
     <div class="main-wrapper">
-      <h1>Shelf Book Tracker</h1>
+      <h1  class="bg-midnight text-tahiti">Shelf Book Tracker</h1>
       <p>
-        Keep track of the books you've read or the books you are yet to read but
-        want to!
+        Keep track of the books you've read and all the books that you've just
+        not got around to reading yet!
       </p>
     </div>
 
     <button class="add">Add Book</button>
     <dialog class="dialog">
       <form action="" method="dialog">
-        <label for="book">Book</label>
-        <input type="text" id="book" />
+        <label for="title">Title</label>
+        <input type="text" id="title" />
         <label for="author">Author</label>
-        <input type="text" name="Author" id="" />
+        <input type="text" name="Author" id="author" />
         <select name="status" id="status">
-          <option value="read">Read</option>
-          <option value="unread">Unread</option>
+          <option value="Read">Read</option>
+          <option value="Unread" selected>Unread</option>
         </select>
         <button class="submit">Submit</button>
         <button class="cancel">Cancel</button>
@@ -32,22 +32,21 @@
     </dialog>
 
     <table class="table">
-      <tr>
-        <th>Title</th>
-        <th>Author</th>
-        <th>Status</th>
-      </tr>
-      <tr>
-        <td>Book</td>
-        <td>Book</td>
-        <td>Book</td>
-      </tr>
-      <tr>
-        <td>Book</td>
-        <td>Book</td>
-        <td>Book</td>
-      </tr>
+      <thead>
+        <tr>
+          <th class="title">Title</th>
+          <th class="author">Author</th>
+          <th class="status">Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="tbody">
+        <!-- add new row here -->
+      </tbody>
     </table>
+    <div class="number-of-books">
+      <h2>You have read:</h2>
+    </div>
     <script src="main.js"></script>
   </body>
 </html>
