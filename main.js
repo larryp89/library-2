@@ -124,7 +124,7 @@ submitButton.addEventListener("click", function () {
   let book = new Book(titleInput.value, authorInput.value, isReadSelect.value);
   if (checkDuplicate(book.title)) {
     alert("Book already in Library");
-    clearForm()
+    clearForm() 
     return;
   }
   addBooktoLibrary(book);
@@ -170,3 +170,5 @@ myLibrary.push(LOTR);
 addBookToTable(mobyDick);
 addBookToTable(LOTR);
 calculateBooksRead(myLibrary);
+
+console.log("I'm branches")
