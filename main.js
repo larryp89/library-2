@@ -1,174 +1,202 @@
-function Book(title, author, status) {
-  this.title = title;
-  this.author = author;
-  this.status = status;
-  this.toggleStatus = function () {
+class Book {
+  constructor(title, author, status) {
+    this.title = title;
+    this.author = author;
+    this.status = status;
+  }
+  toggleStatus() {
     this.status = this.status === "Read" ? "Unread" : "Read";
-  };
+  }
 }
 
-const myLibrary = [];
+class Shelf {
+  constructor() {
+    this.myLibrary = [];
+  }
+  addBooktoLibrary(book) {
+    this.myLibrary.push(book);
+  }
 
-function addBooktoLibrary(book) {
-  myLibrary.push(book);
-}
+  checkDuplicate(newBook) {
+    for (let book of this.myLibrary) {
+      if (book.title === newBook) {
+        return true;
+      }
+    }
+    return false;
+  }
 
-function checkDuplicate(newBook) {
-  for (let book of myLibrary) {
-    if (book.title === newBook) {
-      return true;
+  calculateBooksRead() {
+    let counter = 0;
+    for (let book of this.myLibrary) {
+      if (book.status === "Read") {
+        counter += 1;
+      }
+    }
+    document.querySelector(".books-read").textContent = counter;
+  }
+
+  updateBookStatuses(bookname) {
+    for (let book of this.myLibrary) {
+      if (book.title === bookname) {
+        book.toggleStatus();
+      }
+    }
+  }
+
+  deleteBook(bk) {
+    for (let i in this.myLibrary) {
+      if (this.myLibrary[i].title === bk) {
+        this.myLibrary.splice(i, 1);
+        break;
+      }
     }
   }
 }
 
-function calculateBooksRead(arr) {
-  let counter = 0;
-  for (let book of arr) {
-    if (book.status === "Read") {
-      counter += 1;
+class ShelfManager {
+  constructor() {
+    this.titleInput = document.querySelector("#title");
+    this.authorInput = document.querySelector("#author");
+    this.isReadSelect = document.querySelector("#status");
+    this.tableBody = document.querySelector("tbody");
+  }
+
+  clearForm() {
+    this.titleInput.value = "";
+    this.authorInput.value = "";
+  }
+
+  addBookToTable(book) {
+    let newRow = document.createElement("tr");
+
+    let titleCell = document.createElement("td");
+    titleCell.textContent = book.title;
+    newRow.appendChild(titleCell);
+
+    let authorCell = document.createElement("td");
+    authorCell.textContent = book.author;
+    newRow.appendChild(authorCell);
+
+    let statusCell = document.createElement("td");
+    let statusButton = document.createElement("button");
+    statusButton.className = "read-status";
+    statusButton.textContent = book.status;
+
+    if (statusButton.textContent === "Read") {
+      statusButton.classList.add("has-read");
+    } else {
+      statusButton.classList.add("unread");
+    }
+
+    statusCell.append(statusButton);
+    newRow.appendChild(statusCell);
+
+    let deleteCell = document.createElement("td");
+    let deleteButton = document.createElement("button");
+    deleteButton.className = "del-button";
+    deleteButton.textContent = "Delete";
+    deleteCell.appendChild(deleteButton);
+    newRow.appendChild(deleteCell);
+
+    this.tableBody.appendChild(newRow);
+  }
+
+  toggleReadStatus(statusButton) {
+    if (statusButton.textContent === "Unread") {
+      statusButton.textContent = "Read";
+      statusButton.classList.replace("unread", "has-read");
+    } else {
+      statusButton.textContent = "Unread";
+      statusButton.classList.replace("has-read", "unread");
     }
   }
-  booksReadSpan.textContent = counter;
 }
 
-function updateBookStatuses(bookname) {
-  for (let book of myLibrary) {
-    if (book.title === bookname) {
-      book.toggleStatus();
-    }
+class UIManager {
+  constructor() {
+    // create instances
+    this.shelf = new Shelf();
+    this.shelfManager = new ShelfManager();
+
+    // get DOM elements & add event listeners
+    this.dialog = document.querySelector(".dialog");
+    this.addButton = document
+      .querySelector(".add")
+      .addEventListener("click", () => {
+        this.dialog.showModal();
+      });
+    this.submitButton = document
+      .querySelector(".submit")
+      .addEventListener("click", () => {
+        if (
+          !this.shelfManager.titleInput.value ||
+          !this.shelfManager.authorInput.value
+        ) {
+          alert("Please fill in all fields");
+          return;
+        }
+        let book = new Book(
+          this.shelfManager.titleInput.value,
+          this.shelfManager.authorInput.value,
+          this.shelfManager.isReadSelect.value
+        );
+        if (this.shelf.checkDuplicate(book.title)) {
+          alert("Book already in Library");
+          this.shelfManager.clearForm();
+          return;
+        }
+        this.shelf.addBooktoLibrary(book);
+        this.shelfManager.clearForm();
+        this.shelfManager.addBookToTable(book);
+        this.shelf.calculateBooksRead(this.shelf.myLibrary);
+      });
+    this.cancelButton = document
+      .querySelector(".cancel")
+      .addEventListener("click", () => {
+        this.shelfManager.clearForm();
+      });
+    this.tableBody = document
+      .querySelector(".tbody")
+      .addEventListener("click", (event) => {
+        const target = event.target;
+        const row = target.closest("tr");
+        const bookname = row.querySelector("td").textContent;
+
+        if (target.matches(".del-button")) {
+          this.shelf.deleteBook(bookname);
+          row.remove();
+          this.shelf.calculateBooksRead(this.shelf.myLibrary);
+        } else if (target.matches(".read-status")) {
+          this.shelf.updateBookStatuses(bookname);
+          this.shelfManager.toggleReadStatus(target);
+          this.shelf.calculateBooksRead(this.shelf.myLibrary);
+        } else if (event.target && event.target.matches(".del-button")) {
+          let row = event.target.closest("tr");
+          let bookname = row.querySelector("td").textContent;
+          this.shelf.deleteBook(bookname);
+          row.remove();
+        }
+      });
   }
 }
 
-function clearForm() {
-  titleInput.value = "";
-  authorInput.value = "";
-}
+// Initialize the UIManager which will create the shelf and shelfManager instances
+const uiManager = new UIManager();
 
-function deleteBook(bk) {
-  for (let i in myLibrary) {
-    if (myLibrary[i].title === bk) {
-      myLibrary.splice(i, 1);
-      break;
-    }
-  }
-}
-
-function addBookToTable(book) {
-  let newRow = document.createElement("tr");
-
-  let titleCell = document.createElement("td");
-  titleCell.textContent = book.title;
-  newRow.appendChild(titleCell);
-
-  let authorCell = document.createElement("td");
-  authorCell.textContent = book.author;
-  newRow.appendChild(authorCell);
-
-  let statusCell = document.createElement("td");
-  let statusButton = document.createElement("button");
-  statusButton.className = "read-status";
-  statusButton.textContent = book.status;
-
-  if (statusButton.textContent === "Read") {
-    statusButton.classList.add("has-read");
-  } else {
-    statusButton.classList.add("unread");
-  }
-
-  statusCell.append(statusButton);
-  newRow.appendChild(statusCell);
-
-  let deleteCell = document.createElement("td");
-  let deleteButton = document.createElement("button");
-  deleteButton.className = "del-button";
-  deleteButton.textContent = "Delete";
-  deleteCell.appendChild(deleteButton);
-  newRow.appendChild(deleteCell);
-
-  tableBody.appendChild(newRow);
-}
-
-function toggleReadStatus(statusButton) {
-  if (statusButton.textContent === "Unread") {
-    statusButton.textContent = "Read";
-    statusButton.classList.replace("unread", "has-read");
-  } else {
-    statusButton.textContent = "Unread";
-    statusButton.classList.replace("has-read", "unread");
-  }
-}
-
-// get DOM elements
-dialog = document.querySelector(".dialog");
-addButton = document.querySelector(".add");
-submitButton = document.querySelector(".submit");
-cancelButton = document.querySelector(".cancel");
-tableBody = document.querySelector(".tbody");
-
-let titleInput = document.querySelector("#title");
-let authorInput = document.querySelector("#author");
-let isReadSelect = document.querySelector("#status");
-let booksReadSpan = document.querySelector(".books-read");
-
-addButton.addEventListener("click", function () {
-  dialog.showModal();
-});
-
-cancelButton.addEventListener("click", clearForm);
-
-submitButton.addEventListener("click", function () {
-  if (!titleInput.value || !authorInput.value) {
-    alert("Please fill in all fields");
-    return;
-  }
-  let book = new Book(titleInput.value, authorInput.value, isReadSelect.value);
-  if (checkDuplicate(book.title)) {
-    alert("Book already in Library");
-    clearForm() 
-    return;
-  }
-  addBooktoLibrary(book);
-  clearForm();
-  addBookToTable(book);
-  calculateBooksRead(myLibrary);
-});
-
-tableBody.addEventListener("click", function (event) {
-  const target = event.target;
-  const row = target.closest("tr");
-  const bookname = row.querySelector("td").textContent;
-
-  if (target.matches(".del-button")) {
-    deleteBook(bookname);
-    row.remove();
-    calculateBooksRead(myLibrary);
-  } else if (target.matches(".read-status")) {
-    updateBookStatuses(bookname);
-    toggleReadStatus(target);
-    calculateBooksRead(myLibrary);
-  }
-});
-
-tableBody.addEventListener("click", function (event) {
-  if (event.target && event.target.matches(".del-button")) {
-    let row = event.target.closest("tr");
-    let bookname = row.querySelector("td").textContent;
-    deleteBook(bookname);
-    row.remove();
-  }
-});
-
-// add pre-existing books to array
-let mobyDick = new Book("Moby Dick", "Robert Louis Stevenson", "Unread");
+// Add pre-existing books to the shelf managed by uiManager
+let mobyDick = new Book("Moby Dick", "Herman Melville", "Unread");
 let LOTR = new Book(
   "Lord of the Rings: The Fellowship of the Ring",
   "J.R.R Tolkien",
   "Read"
 );
-myLibrary.push(mobyDick);
-myLibrary.push(LOTR);
-addBookToTable(mobyDick);
-addBookToTable(LOTR);
-calculateBooksRead(myLibrary);
 
-console.log("I'm branches")
+// Add books to the shelf managed by uiManager and update the UI
+uiManager.shelf.addBooktoLibrary(mobyDick);
+uiManager.shelf.addBooktoLibrary(LOTR);
+uiManager.shelfManager.addBookToTable(mobyDick);
+uiManager.shelfManager.addBookToTable(LOTR);
+
+// Calculate and display the number of books read
+uiManager.shelf.calculateBooksRead();
